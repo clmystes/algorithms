@@ -1,14 +1,16 @@
 class Node {
   constructor(element) {
     this.element = element;
+    this.pre = null;
     this.next = null;
   }
 }
 
-class LinkedList {
+class DoublyLinkedList {
   constructor() {
     this.size = 0;
     this.head = null;
+    this.tail = null;
   }
 
   append(element) {
@@ -18,7 +20,13 @@ class LinkedList {
     while(current && current.next) {
       current = current.next;
     }
-    this.head ? current.next = node : this.head = node;
+    if(this.head) {
+      current.next = node;
+      node.pre = current;
+      this.tail = node;
+    } else {
+      this.head = this.tail = node;
+    }
     this.size += 1;
   }
 
@@ -26,14 +34,22 @@ class LinkedList {
     if(position < 0 || position > this.size) { return null; }
     let current = this.head;
     let pre = null;
+    let index = 0;
+
     if(position === 0) {
       this.head = current.next;
+      this.size === 1 ? this.tail = null : current.pre = null;
+    } else if(position === this.size - 1) {
+      current = this.tail;
+      this.tail = current.pre;
+      current.next = null;
     } else {
-      for(let i = 0; i < position; i++) {
+      while(index++ < position) {
         pre = current;
         current = current.next;
       }
       pre.next = current.next;
+      current.next.pre = pre;
     }
     this.size -= 1;
     return current.element;
@@ -44,19 +60,33 @@ class LinkedList {
     const node = new Node(element);
     let current = this.head;
     let pre = null;
+    let index = 0;
+
     if(position === 0) {
-      this.head = node;
-      node.next = current;
+      if(!this.head) {
+        this.head = node;
+        this.tail = node;
+      } else {
+        this.head = node;
+        node.next = current;
+        current.pre = node;
+      }
+    } else if(position === this.size) {
+      current = this.tail;
+      this.tail = node;
+      node.pre = current;
+      current.next = node;
     } else {
-      for(let i = 0; i < position; i++) {
+      while(index++ < position) {
         pre = current;
         current = current.next;
       }
-      pre.next = node;
       node.next = current;
+      pre.next = node;
+      node.pre = pre;
+      current.pre = node;
     }
-    this.size -= 1;
-    return current.element;
+    this.size += 1;
   }
 
   toString() {
@@ -97,3 +127,8 @@ class LinkedList {
     return this.head;
   }
 }
+
+let list = new DoublyLinkedList()
+list.append(1)
+list.append(2)
+list.append(3)
