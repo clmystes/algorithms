@@ -127,8 +127,3 @@ class DoublyLinkedList {
     return this.head;
   }
 }
-
-let list = new DoublyLinkedList()
-list.append(1)
-list.append(2)
-list.append(3)
